@@ -123,7 +123,6 @@ fn generic_build() {
     println!("cargo:rustc-link-search=native={}", lib_dir);
 
     if cfg!(feature = "static-tdjson") {
-        println!("cargo:rustc-link-lib=stdc++");
         println!("cargo:rustc-link-lib=static=c++");
         println!("cargo:rustc-link-lib=static=z");
         println!("cargo:rustc-link-lib=static=tdjson_private");
