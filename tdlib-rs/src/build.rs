@@ -240,7 +240,23 @@ fn generic_build(lib_path: Option<String>) {
     println!("cargo:rustc-link-search=native={}", lib_dir);
 
     if cfg!(feature = "static-tdjson") {
-        println!("cargo:rustc-link-lib=static=c++");
+        #[cfg(target_os = "linux")]
+        {
+            // We can statically link libc++ on Linux.
+            println!("cargo:rustc-link-lib=static=c++");
+        }
+
+        #[cfg(target_os = "macos")]
+        {
+            // We can not statically link libc++ on macOS.
+            println!("cargo:rustc-link-lib=c++");
+
+            // Even after statically linking all of the libraries,
+            // libtdjson is still present in load commands.
+            // I believe it happens because it is linked by some library.
+            // This is not an ideal fix, but it works.
+            println!("cargo:rustc-link-arg=-Wl,-dead_strip_dylibs");
+        }
 
         println!("cargo:rustc-link-lib=static=z");
         println!("cargo:rustc-link-lib=static=ssl");
