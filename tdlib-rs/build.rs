@@ -124,9 +124,14 @@ fn generic_build() {
 
     if cfg!(feature = "static-tdjson") {
         println!("cargo:rustc-link-lib=static=c++");
+
         println!("cargo:rustc-link-lib=static=z");
+        println!("cargo:rustc-link-lib=static=ssl");
+        println!("cargo:rustc-link-lib=static=crypto");
+
         println!("cargo:rustc-link-lib=static=tdjson_private");
         println!("cargo:rustc-link-lib=static=tdjson_static");
+
         println!("cargo:rustc-link-lib=static=tdactor");
         println!("cargo:rustc-link-lib=static=tdapi");
         println!("cargo:rustc-link-lib=static=tdclient");
