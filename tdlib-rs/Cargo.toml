@@ -22,7 +22,7 @@ tdjson = "1.8.29"
 
 [features]
 # The default feature build the library using the local tdlib library
-default = []
+default = ["static-tdjson"]
 # This feature is used to enable the functions only available to the Telegram bots
 bots-only-api = []
 # This feature is used to build the documentation preventing linking to the tdjson library
@@ -34,7 +34,7 @@ pkg-config = ["dep:system-deps"]
 # This feature is used to build the library using the tdlib library downloaded from github
 download-tdlib = ["dep:reqwest", "dep:zip"]
 # This feature statically links the tdjson library and its dependencies, instead of dynamically linking it
-static-tdjson = []
+static-tdjson = ["dep:pkg-config"]
 
 [dependencies]
 log = "0.4"
@@ -44,6 +44,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_with = "3.2"
 system-deps = { version = "7", optional = true }
+pkg-config = { version = "0.3", optional = true }
 reqwest = { version = "0.12.4", features = ["blocking"], optional = true }
 zip = { version = "2.0.0", optional = true }
 dirs = "6.0.0"
@@ -52,6 +53,7 @@ dirs = "6.0.0"
 tdlib-rs-gen = { path = "../tdlib-rs-gen", version = "1.1.0" }
 tdlib-rs-parser = { path = "../tdlib-rs-parser", version = "1.1.0" }
 system-deps = { version = "7", optional = true }
+pkg-config = { version = "0.3", optional = true }
 reqwest = { version = "0.12.4", features = ["blocking"], optional = true }
 zip = { version = "2.0.0", optional = true }
 
