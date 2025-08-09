@@ -258,14 +258,17 @@ fn generic_build(lib_path: Option<String>) {
             println!("cargo:rustc-link-arg=-Wl,-dead_strip_dylibs");
         }
 
-        pkg_config::Config::new()
-            .statik(true)
-            .probe("zlib")
-            .unwrap();
-        pkg_config::Config::new()
-            .statik(true)
-            .probe("openssl")
-            .unwrap();
+        #[cfg(unix)]
+        {
+            pkg_config::Config::new()
+                .statik(true)
+                .probe("zlib")
+                .unwrap();
+            pkg_config::Config::new()
+                .statik(true)
+                .probe("openssl")
+                .unwrap();
+        }
 
         println!("cargo:rustc-link-lib=static=tdjson_private");
         println!("cargo:rustc-link-lib=static=tdjson_static");
