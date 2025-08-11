@@ -10,7 +10,11 @@
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_double, c_int};
 
-#[link(name = "tdjson")]
+#[cfg_attr(not(feature = "static-tdjson"), link(name = "tdjson"))]
+#[cfg_attr(
+    feature = "static-tdjson",
+    link(name = "tdjson_static", kind = "static")
+)]
 extern "C" {
     fn td_create_client_id() -> c_int;
     fn td_send(client_id: c_int, request: *const c_char);

@@ -270,6 +270,17 @@ fn generic_build(lib_path: Option<String>) {
                 .unwrap();
         }
 
+        #[cfg(windows)]
+        {
+            let zlib_dir = std::env::var("ZLIB_DIR").expect("ZLIB_DIR must be set");
+            println!("cargo:rustc-link-search=native={}\\lib", zlib_dir);
+
+            println!("cargo:rustc-link-lib=static=libssl");
+            println!("cargo:rustc-link-lib=static=libcrypto");
+
+            println!("cargo:rustc-link-lib=static=zlibstatic");
+        }
+
         println!("cargo:rustc-link-lib=static=tdjson_private");
         println!("cargo:rustc-link-lib=static=tdjson_static");
 
@@ -531,6 +542,20 @@ pub fn build_local_tdlib() {
 pub fn build(_dest_path: Option<String>) {
     check_features();
     set_rerun_if();
+
+    #[cfg(windows)]
+    {
+        // FIXME: Ugly ugly hack. I should find a better way to do this.
+        // We only need to output this if the feature `static-tdjson` is enabled
+        // in base dependency and not build dependency.
+        println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_crc32=crc32");
+        println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_deflate=deflate");
+        println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_deflateEnd=deflateEnd");
+        println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_inflate=inflate");
+        println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_inflateEnd=inflateEnd");
+        println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_deflateInit2=deflateInit2");
+        println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_inflateInit2=inflateInit2");
+    }
 
     #[cfg(feature = "pkg-config")]
     build_pkg_config();
