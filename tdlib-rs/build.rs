@@ -156,8 +156,23 @@ fn generic_build() {
 
         #[cfg(windows)]
         {
-            vcpkg::find_package("zlib").unwrap();
-            vcpkg::find_package("openssl").unwrap();
+            if let Ok(zlib_root) = env::var("ZLIB_ROOT") {
+                println!("cargo:rustc-link-search=native={}/lib", zlib_root);
+                println!("cargo:rustc-link-lib=static=zlibstatic");
+            } else {
+                vcpkg::find_package("zlib").unwrap();
+            }
+
+            if let Ok(openssl_root) = env::var("OPENSSL_ROOT") {
+                println!(
+                    "cargo:rustc-link-search=native={}/lib/VC/x64/MD",
+                    openssl_root
+                );
+                println!("cargo:rustc-link-lib=static=libcrypto_static");
+                println!("cargo:rustc-link-lib=static=libssl_static");
+            } else {
+                vcpkg::find_package("openssl").unwrap();
+            }
         }
 
         println!("cargo:rustc-link-lib=static=tdjson_private");
