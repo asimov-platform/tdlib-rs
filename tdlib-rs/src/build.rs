@@ -238,54 +238,9 @@ fn generic_build(lib_path: Option<String>) {
     }
 
     println!("cargo:rustc-link-search=native={}", lib_dir);
-
-    if cfg!(feature = "static-tdjson") {
-        #[cfg(target_os = "linux")]
-        {
-            // We can statically link libc++ on Linux.
-            println!("cargo:rustc-link-lib=static=c++");
-        }
-
-        #[cfg(target_os = "macos")]
-        {
-            // We can not statically link libc++ on macOS.
-            println!("cargo:rustc-link-lib=c++");
-
-            // Even after statically linking all of the libraries,
-            // libtdjson is still present in load commands.
-            // I believe it happens because it is linked by some library.
-            // This is not an ideal fix, but it works.
-            println!("cargo:rustc-link-arg=-Wl,-dead_strip_dylibs");
-        }
-
-        #[cfg(unix)]
-        {
-            pkg_config::Config::new()
-                .statik(true)
-                .probe("zlib")
-                .unwrap();
-            pkg_config::Config::new()
-                .statik(true)
-                .probe("openssl")
-                .unwrap();
-        }
-
-        println!("cargo:rustc-link-lib=static=tdjson_private");
-        println!("cargo:rustc-link-lib=static=tdjson_static");
-
-        println!("cargo:rustc-link-lib=static=tdactor");
-        println!("cargo:rustc-link-lib=static=tdapi");
-        println!("cargo:rustc-link-lib=static=tdclient");
-        println!("cargo:rustc-link-lib=static=tdcore");
-        println!("cargo:rustc-link-lib=static=tddb");
-        println!("cargo:rustc-link-lib=static=tdnet");
-        println!("cargo:rustc-link-lib=static=tdsqlite");
-        println!("cargo:rustc-link-lib=static=tdutils");
-    } else {
-        println!("cargo:include={}", include_dir);
-        println!("cargo:rustc-link-lib=dylib=tdjson");
-        println!("cargo:rustc-link-arg=-Wl,-rpath,{}", lib_dir);
-    }
+    println!("cargo:include={}", include_dir);
+    println!("cargo:rustc-link-lib=dylib=tdjson");
+    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", lib_dir);
 }
 
 /// Check if the features are correctly set.
