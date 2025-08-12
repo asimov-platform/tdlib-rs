@@ -157,9 +157,7 @@ fn generic_build() {
         #[cfg(windows)]
         {
             vcpkg::find_package("zlib").unwrap();
-
-            println!("cargo:rustc-link-lib=static=libssl");
-            println!("cargo:rustc-link-lib=static=libcrypto");
+            vcpkg::find_package("openssl").unwrap();
         }
 
         println!("cargo:rustc-link-lib=static=tdjson_private");

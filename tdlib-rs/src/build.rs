@@ -270,12 +270,6 @@ fn generic_build(lib_path: Option<String>) {
                 .unwrap();
         }
 
-        #[cfg(windows)]
-        {
-            println!("cargo:rustc-link-lib=static=libssl");
-            println!("cargo:rustc-link-lib=static=libcrypto");
-        }
-
         println!("cargo:rustc-link-lib=static=tdjson_private");
         println!("cargo:rustc-link-lib=static=tdjson_static");
 
