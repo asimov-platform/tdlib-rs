@@ -272,13 +272,8 @@ fn generic_build(lib_path: Option<String>) {
 
         #[cfg(windows)]
         {
-            let zlib_dir = std::env::var("ZLIB_DIR").expect("ZLIB_DIR must be set");
-            println!("cargo:rustc-link-search=native={}\\lib", zlib_dir);
-
             println!("cargo:rustc-link-lib=static=libssl");
             println!("cargo:rustc-link-lib=static=libcrypto");
-
-            println!("cargo:rustc-link-lib=static=zlibstatic");
         }
 
         println!("cargo:rustc-link-lib=static=tdjson_private");

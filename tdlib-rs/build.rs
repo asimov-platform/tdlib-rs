@@ -122,7 +122,8 @@ fn generic_build() {
 
     println!("cargo:rustc-link-search=native={}", lib_dir);
 
-    if cfg!(feature = "static-tdjson") {
+    #[cfg(feature = "static-tdjson")]
+    {
         #[cfg(target_os = "linux")]
         {
             // We can statically link libc++ on Linux.
@@ -155,13 +156,10 @@ fn generic_build() {
 
         #[cfg(windows)]
         {
-            let zlib_dir = std::env::var("ZLIB_DIR").expect("ZLIB_DIR must be set");
-            println!("cargo:rustc-link-search=native={}\\lib", zlib_dir);
+            vcpkg::find_package("zlib").unwrap();
 
             println!("cargo:rustc-link-lib=static=libssl");
             println!("cargo:rustc-link-lib=static=libcrypto");
-
-            println!("cargo:rustc-link-lib=static=zlibstatic");
         }
 
         println!("cargo:rustc-link-lib=static=tdjson_private");
@@ -175,7 +173,10 @@ fn generic_build() {
         println!("cargo:rustc-link-lib=static=tdnet");
         println!("cargo:rustc-link-lib=static=tdsqlite");
         println!("cargo:rustc-link-lib=static=tdutils");
-    } else {
+    }
+
+    #[cfg(not(feature = "static-tdjson"))]
+    {
         println!("cargo:include={}", include_dir);
         println!("cargo:rustc-link-lib=dylib=tdjson");
         println!("cargo:rustc-link-arg=-Wl,-rpath,{}", lib_dir);
