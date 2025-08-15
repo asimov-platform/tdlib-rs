@@ -163,7 +163,11 @@ fn download_tdlib() {
     let zip_path = format!("{}.zip", &tdlib_dir);
 
     // Create the request
-    let response = reqwest::blocking::get(&url).unwrap();
+    let client = reqwest::blocking::Client::builder()
+        .timeout(None)
+        .build()
+        .unwrap();
+    let response = client.get(&url).send().unwrap();
 
     // Check if the response status is successful
     if response.status().is_success() {
