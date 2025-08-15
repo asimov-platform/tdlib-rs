@@ -487,11 +487,12 @@ pub fn build(_dest_path: Option<String>) {
     check_features();
     set_rerun_if();
 
+    // FIXME: Ugly ugly hack. I should find a better way to do this.
+    // We only need to output this if the feature `static-tdjson` is enabled
+    // in base dependency and not build dependency.
+
     #[cfg(windows)]
     {
-        // FIXME: Ugly ugly hack. I should find a better way to do this.
-        // We only need to output this if the feature `static-tdjson` is enabled
-        // in base dependency and not build dependency.
         println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_crc32=crc32");
         println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_deflate=deflate");
         println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_deflateEnd=deflateEnd");
@@ -499,6 +500,11 @@ pub fn build(_dest_path: Option<String>) {
         println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_inflateEnd=inflateEnd");
         println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_deflateInit2=deflateInit2");
         println!("cargo:rustc-link-arg=/ALTERNATENAME:__imp_inflateInit2=inflateInit2");
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        println!("cargo:rustc-link-arg=-Wl,-dead_strip_dylibs");
     }
 
     #[cfg(feature = "pkg-config")]
